@@ -43,7 +43,7 @@ def get_filters():
         else:
             break
     print('-'*40)
-    return city.lower(), month, day
+    return city.lower(), month.lower(), day.lower()
 def load_data(city, month, day):
     """
     Loads data for the specified city and filters by month and day if applicable.
@@ -150,22 +150,74 @@ def user_stats(df):
     print("\nThis took %s seconds." % (time.time() - start_time))
     print('-'*40)
 
+def display_data(df):
+    """Displays Raw data to the user based on the city name."""
+    start_index = 0
+    end_index = 5
+    display_raw_data = input('Do you want to see raw data? Please Enter Yes or No\n')
+    while True: 
+        if display_raw_data.lower() == 'yes':
+            # TO DO: Display 5 Rows of data
+            print("Display 5 rows of raw data\n" ,df.iloc[start_index:end_index])
+            start_index = end_index
+            end_index = end_index + 5
+             # TO DO: Check if last index exceeding the end_index value is exceeding the last index value of the data
+            if end_index > df.index[-1]:
+                end_index = df.index[-1]
+                display_raw_data = input('Do you want to see more 5 lines of raw data? Please Enter Yes or No\n')
+                if display_raw_data.lower() == 'yes':
+                    print("Displaying 5 rows of raw data\n" ,df.iloc[start_index:end_index+1])
+                    print('\n You have reached the End of Raw data ')
+                    break
+                 # TO DO: Handle invalid inputs  
+                elif display_raw_data.lower() != 'no':
+                    print('Please Enter only Yes or No')
+                    display_raw_data = input('Do you want to see 5 lines of raw data? Please Enter Yes or No\n')
+                    continue
+                 # TO DO: Exit from display data function
+                elif display_raw_data.lower() == 'no' :
+                    print('\nExiting display of Raw Data')
+                    break
+                else:
+                    continue
+            display_raw_data = input('Do you want to see more 5 lines of raw data? Please Enter Yes or No\n')
+             # TO DO: Handle invalid inputs  
+            if display_raw_data.lower() != 'no' and display_raw_data.lower() !='yes' :
+                print('Please Enter only Yes or No')
+                display_raw_data = input('Do you want to see 5 lines of raw data? Please Enter Yes or No\n')
+                continue
+            # TO DO: Exit from display data function
+            elif display_raw_data.lower() == 'no' :
+                print('\nExiting display of Raw Data')
+                break
+            else:
+                continue
+        # TO DO: Handle invalid inputs       
+        elif display_raw_data.lower() != 'no':
+            print('Please Enter only Yes or No\n')
+            display_raw_data = input('Do you want to see  5 lines of raw data? Please Enter Yes or No\n')
+            continue
+        # TO DO: Exit from display data function
+        elif display_raw_data.lower() == 'no' :
+            print('\nExiting display of Raw Data')
+            break
 def main():
     while True:
         city, month, day = get_filters()
         print("Calculating the Descriptive Statistics for CITY : {} \n for the month : {} \n and for the Day of Week : {} \n".format(city,month,day))
         df = load_data(city, month, day)
-
         time_stats(df)
         station_stats(df)
         trip_duration_stats(df)
-        if city.lower() == "chicago" or city.lower() == "new york city":
+        # TO DO: Check if city name is Washington , if yes then display only Counts of User Types
+        if city == "chicago" or city == "new york city":
             user_stats(df)
+            display_data(df)
         else:
-            print("User Status is available only for Chicago and New York Cities . It is not available for Washington \n")
+            print("Counts of user Types \n  {}".format(df['User Type'].value_counts()))
+            display_data(df)
         restart = input('Would you like to restart? Enter yes or no.\n')
         if restart.lower() != 'yes':
             break
-
 if __name__ == "__main__":
 	main()
